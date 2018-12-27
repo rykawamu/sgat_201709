@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Java8 その先へ</title>
+
+		<meta name="description" content="Java8 のおさらいと、gradle などの周辺技術、そして Java9 へ">
+		<meta name="author" content="white-azalea">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		
+
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Java8 and more</h1>
+					<h3>Java8 と周辺技術、Java9 へ</h3>
+					<p>
+						<small>Created by <a href="http://white-azalea.hatenablog.jp/">white-azalea</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h2>はじめに</h2>
+					<p class="lft">
+						Java7 は既に EOL (Oracleサポート対象外)で、Java9 が 9/21 ロールアウト、Java8 の命だって怪しいぞ！<br/>
+						という事で、Java7 から Java8 に変わった時の変更、そして Java 周辺環境を改めておさらいしよう。
+					</p>
+				</section>
+
+				<section>
+					<h2>なお</h2>
+					<p class="lft">
+						今回は、全員で手を動かし、試してみるハンズオンです。 <br>
+						ですので、資料の順序が操作手順となっています。
+					</p>
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				<section>
+					<h2>目次</h2>
+					<ol>
+						<li>社外勉強会の意義</li>
+						<li>Gradle を使ってみる</li>
+						<li>Lombok</li>
+						<li>Java7 → 8 で入った仕様。</li>
+						<li>まだ足りない…</li>
+						<li>Java9 仕様へ</li>
+					</ol>
+				</section>
+				
+				<section>
+					<section>
+						<h2>社外で勉強する意義</h2>
+						<h4>なぜ奴らはそんなに何でもできるんだ？</h4>
+					</section>
+					<section>
+						<h3>社外で勉強する人</h3>
+						<div class="lft">
+							<p>会社に言われるでもなく勉強する人は、総じてそうでない人との生産性の差が出ます。</p>
+							<p>その差はどこにあるのでしょう？</p>
+							<p>結論だけ言えば、それはその分野における知識量の差です。</p>
+						</div>
+					</section>
+					<section>
+						<h3>知識の差</h3>
+						<div class="lft">
+							<p>確かにこの業界では、仕事でも少しづつ新しいものは入ってきます。</p>
+							<p>ですが、技術は決して<strong>それだけではありません</strong>。</p>
+							<p>
+								勉強する方々は、必要な技術の習得だけでなく、「+α」を習得するのです。<br>
+								その「α」とはどんなものなのでしょう？
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>技術はどうして生まれる？</h3>
+						<div class="lft">
+							<p>新しい技術というのはどうして生まれるのでしょうか？<br>答えるまでもなく</p>
+							<ol>
+								<li>
+									<strong>根本的に新しい価値に追従するため</strong><br>
+									デバイスの進化や、ビジネスが変化して、新しい考え方が求められた。
+								</li>
+								<li>
+									<strong>今ある面倒を解決するため</strong><br>
+									今の開発では、複雑性を回避できない、もっと簡単にモノが作れるように特化した何かを作る。
+								</li>
+							</ol>
+							<p>この二つしかありません。</p>
+						</div>
+					</section>
+					<section>
+						<h3>最新技術はどうして生まれる？</h3>
+						<div class="lft">
+							<p>
+								もうわかりますね？ビジネスが変化したら対応しなければならない。<br>
+								つまりそれが「仕事に含まれる新しいこと」なのです。
+							</p>
+							<p>
+								個人差が生まれるのは後者。<br>
+								<strong>より効率的にモノを作る技術</strong> をモノにしているかどうかの差です。
+							</p>
+							<p>
+								それは決して先天的なものでも才能でもありません。<br>
+								どんな人間でも知らないものは知らないのです。
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>そしてそのアルファは意外と簡単</h3>
+						<div class="lft">
+							<p>確かにこの「+α」は凄まじく数が多く、その積み重ねを追いつくには相応の時間が必要です。</p>
+							<p>ですがこの「α」、<strong>一つ一つはとても小さい</strong>のです。</p>
+							<p>だって「簡単にするために生まれた」技術なのですから。</p>
+							<p>
+								しかし、それが例えばコードが 10% 短くなるものなら？<br>
+								アプリケーション全体で一体どれだけのコードが削減できるのでしょう？
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>それを覚えるのが社外勉強会だ</h3>
+						<div class="lft">
+							<p>
+								そしてそんな話は、仕事の中では語られません。<br>
+								<strong>だって必須じゃないですから</strong>。
+							</p>
+							<p>そんなのは、休日にも勉強会に出るような変人どもの領域なのです。</p>
+						</div>
+					</section>
+					<section>
+						<h4>だから</h4>
+						<h2>勉強会へ行こう</h2>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Gradleを使ってみる</h2>
+						<h4>Ant, Maven 後継の最新のビルドツール</h4>
+					</section>
+					<section>
+						<h3>突然ですが</h3>
+						<div class="lft">
+							<strong>皆さんは、Jar ファイルや、War ファイルを自分で作ったことはありますか？</strong>
+							<p>
+								偏見かもしれませんが、大抵の場合、「Eclipse(IDE)が設定してくれたものしか触ったことがない」とか、
+								「プロジェクトの誰かが作ってくれたものをそのまま使ってる」とかではありませんか？
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>でもそれでは足りない</h3>
+						<div>
+							<p>ですが、それではやれることが限られてしまいます。</p>
+							<p>
+								開発を簡単にする仕組みとは、<strong>要するにビルドの仕組みやライブラリの仕組み</strong>
+								に多く潜むからです。
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>Gradle 概要</h3>
+						<div class="lft">
+							<p>
+								Java でこの分野は、長らく Maven あたりが有名でした。<br>
+								実際、未だに Maven を使っている所も多いでしょう。
+							</p>
+							<p>
+								しかし、Android 開発（設定多し）や、Web 開発でも anguler/scss （Java以外のコンパイル）など
+								ビルドするものが多様化し、XML のビルド設定では追いつかないという現状があります。
+							</p>
+							<p>
+								そんな中で生まれてきたのが Gradle です。
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>Gradle 概要</h3>
+						<div class="lft">
+							<p>
+								Gradle はあらゆるものの汎用ビルドツールとして作成されました。<br>
+								Groovy 言語のフルセットが使えるビルド環境で、どちらかと言えばビルド環境を作るフレームワークといったほうが近いでしょう。
+							</p>
+							<p>そのため、極論すれば <strong>なんでもアリ</strong> なビルドツールです。</p>
+						</div>
+					</section>
+					<section>
+						<h3>Gradle 概要</h3>
+						<div class="lft">
+							<p>例えば構成として下記のパターンなんかあります。</p>
+							<ul>
+								<li>Spring MVC 4 (Java 製)</li>
+								<li>SCSS(CSS ファイルにコンパイルされる言語。コンパイルには Ruby を使う)</li>
+								<li>React(動的な画面 HTML 生成できる環境。コンパイルには nodejs を使う)</li>
+							</ul>
+							<p>こんな組み合わせを、gradle を使って１コマンドでコンパイルできるようにするなどです。</p>
+						</div>
+					</section>
+					<section>
+						<h3>でも今回は…</h3>
+						<div>
+							期待した人ごめんなさい。ビクッとした人はご安心を。<br>
+							いきなりそんな <strong>なんでもはしません</strong>。
+						</div>
+					</section>
+					<section>
+						<h3>インストール</h3>
+						<div class="lft">
+							<p>Java8 のインストール以外では下記で入ります</p>
+							<ul>
+								<li>
+									<strong>MacOS X</strong>
+									<p>Homebrew でインストールします <code>brew install gradle</code> で入ります。</p>
+								</li>
+								<li>
+									<strong>単純な方法</strong>
+									<p>
+										Homebrew 入ってない、Windows だよって人はこっちです。<br>
+										<a href="https://gradle.org/">https://gradle.org/</a> からダウンロードし、解凍、PATH 設定を行います。<br>
+										<a href="http://qiita.com/quwahara/items/9c4e5fbda421cfcb09ad">こちらのドキュメント</a> が参考になるでしょう。
+									</p>
+								</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h3>プロジェクト作成</h3>
+						<div class="lft">
+							<p>
+								<code class="red">gradle init</code> コマンドでプロジェクトを作成します。<br>
+								作成された gradlew というバッチ/シェルは、gradle をインストールしてない人向けです。
+							</p>
+							<pre>
+yoshii-no-MacBook-Pro:gradle azalea$ gradle init
+
+BUILD SUCCESSFUL in 0s
+2 actionable tasks: 2 executed
+yoshii-no-MacBook-Pro:gradle azalea$ ls -l
+total 40
+-rw-r--r--  1 azalea  staff  1172  9 10 20:26 build.gradle
+drwxr-xr-x  3 azalea  staff   102  9 10 20:26 gradle
+-rwxr-xr-x  1 azalea  staff  5296  9 10 20:26 gradlew
+-rw-r--r--  1 azalea  staff  2260  9 10 20:26 gradlew.bat
+-rw-r--r--  1 azalea  staff   581  9 10 20:26 settings.gradle
+							</pre>
+							<p>大抵の IDE で、これをプロジェクトとして取り込めます。<br>取り込み方、プラグイン要否は IDE によります。</p>
+						</div>
+					</section>
+					<section>
+						<h3>Java のビルド設定</h3>
+						<div class="lft">
+							<p>プロジェクト設定は build.gradle に記述されています。<br>
+								こんな感じに書いてみます。</p>
+							<pre>
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.24'
+    testCompile 'junit:junit:4.12'
+}
+							</pre>
+							<p>コンパイルだけならこれで完了ですが、もう少し詳細な設定を入れます。</p>
+						</div>
+					</section>
+					<section>
+						<h3>Java のビルド設定</h3>
+						<div class="lft">
+							<pre>
+// Java コンパイラが Windows だと SJIS だったりするのでUTF-8に矯正
+def defaultEncoding = 'UTF-8'
+[compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+
+// Jar 設定
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+group = 'example'
+archivesBaseName = 'hello'
+version = '0.1.0'
+mainClassName = 'example.Hello'
+
+jar {  // 実行設定
+    manifest {
+        attributes 'Main-Class' : mainClassName
+    }
+}
+							</pre>
+						</div>
+					</section>
+					<section>
+						<h3>ディレクトリ構成</h3>
+						<div class="lft">
+							<p>
+								設定は終了です。では実際にコードを書き始めましょう。<br>
+								作成するディレクトリ構成は下記です。
+							</p>
+							<small>
+								<ul>
+									<li>build.gradle</li>
+									<li>
+										src
+										<ul>
+											<li>
+												main
+												<ul>
+													<li>java<br>Java ソースはここにおきます</li>
+													<li>resources<br>properties 等の設定ファイル置き場です</li>
+												</ul>
+											</li>
+											<li>
+												test
+												<ul>
+													<li>java<br>ユニットテストコードを置きます</li>
+													<li>resources<br>テスト時に読み込む設定置き場です</li>
+												</ul>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</small>
+						</div>
+					</section>
+					<section>
+						<h3>Java コードを書き</h3>
+						<div class="lft">
+							<pre>
+package example;
+public class Hello {
+    public static void main(String[] args) {
+        System.out.println(getMessage());
+    }
+    public static String getMessage() {
+        return "Hello world.";
+    }
+}
+							</pre>
+						</div>
+					</section>
+					<section>
+						<h3>テストを書きます</h3>
+						<div class="lft">
+							<pre>
+package example;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+@RunWith(JUnit4.class)
+public class HelloTest {
+
+    @Test
+    public void helloUnitTest() {
+        org.junit.Assert.assertEquals("Hello world!", Hello.getMessage());
+    }
+}
+							</pre>
+						</div>
+					</section>
+					<section>
+						<h3>テスト</h3>
+						<div class="lft">
+							<p>正しいかどうかをまずテスト。</p>
+							<pre><code>gradlew test</code></pre>
+							<p>
+								結果が表示されるだけでなく、 build/reports に実行結果がレポートされます。
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>ビルド</h3>
+						<div class="lft">
+							<p>通ったらビルドしてみましょう。</p>
+							<pre><code>gradlew build</code></pre>
+							<p>
+								ビルドを実行し、jar ファイルを生成します。<br>
+								jar ファイルは、 build/libs 以下に出来上がっています。
+							</p>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>周辺技術:LOMBOK</h2>
+						<h4>早速ビルドに割り込んでみましょう。</h4>
+					</section>
+					<section>
+						<h3>Lombok 概要</h3>
+						<div class="lft">
+							<p>Lombok は Java5 時代に開発が始まったライブラリで、ボイラープレート(テンプレートのような記述)を排除するためのライブラリです。<br>
+							コンパイル処理に割り込みをかけて、必要なメソッドなどを自動生成します。
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>コンストラクタ省略</h3>
+						<div class="lft">
+							<p>
+								クラス変数を初期化できるコンストラクタを自動生成できます。<br>
+								そんなコンストラクタはみなさんよく書きますよね？
+							</p>
+							<pre><code class="java">
+class Example {
+    private String name = "default";
+    public String hello() { return "Hello " + name; }
+    
+	public Example() {}
+    
+	public Example(String name) {
+        this.name = name;
+	}
+}
+							</code></pre>
+							<strong>これが−−−</strong>
+						</div>
+					</section>
+					<section>
+						<h3>コンストラクタ省略</h3>
+						<div class="lft">
+							<strong class="red">こうじゃ！</strong>
+							<pre><code class="java">
+@NoArgsConstructor
+@AllArgsConstructor
+class Example {
+    private String name = "default";
+    public String hello() { return "Hello " + name; }
+}
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>Getter/Setter 省略</h3>
+						<div class="lft">
+							<p>みんな <s>大っ嫌いな</s> 大好き getter/setter</p>
+							<pre><code class="java">
+public static class Example {
+    private String name = "default";
+	
+	public void setName(String value) {
+		this.name = value;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+}
+							</code></pre>
+							<strong>これが−−−</strong>
+						</div>
+					</section>
+					<section>
+						<h3>Getter/Setter 省略</h3>
+						<div class="lft">
+							<strong class="red">こうじゃ！</strong>
+							<pre><code class="java">
+public static class Example {
+    @Getter
+    @Setter
+    private String name = "default";
+}
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>Equals も省略</h3>
+						<div class="lft">
+							<p>面倒だからみんな書かないんだよね。<strong>これが−−−</strong></p>
+							<pre><code class="java">public class Example {
+	@Getter
+	@Setter
+    private String name;
+
+    @Override
+    public boolean equals(Object e) {
+        if (e instanceof Example) {
+            Example ex = (Example) e;
+            boolean isNotNull = this.name != null && ex.name != null;
+            if (this.name == ex.name || isNotNull && this.name.equals(ex.name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>Equals も省略</h3>
+						<div class="lft">
+							<strong class="red">こうじゃ！</strong>
+							<pre><code class="java">
+@EqualsAndHashCode
+@AllArgsConstructor
+public static class Example {
+    private String name;
+}
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>ToString も省略しよう</h3>
+						<div class="lft">
+							<p>ToString だってイケます</p>
+							<pre><code class="java">
+@ToString // これがコメントアウトした toString 同等です
+@AllArgsConstructor
+public static class Example {
+    private String name;
+    //@Override public String toString() {
+    //    return String.format("Example(name=%s)", this.name);
+    //}
+}
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>logger 省略</h3>
+						<div class="lft">
+							<p>Log4J/Slf4J のお決まり記述も自動化できます。</p>
+							<pre><code class="java">
+@Slf4j
+public static class Example {
+    // private Logger log = LoggerFactory.getLogger(this.getClass());
+    public void writeLog() {
+        this.log.debug("Hello debug.");
+    }
+}
+							</code></pre>
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Java7 → 8</h1>
+						<h3>変わった所を列挙</h3>
+					</section>
+					<section>
+						<h3>新機能一覧</h3>
+						<ol>
+							<li>ラムダ式</li>
+							<li>デフォルトメソッド</li>
+							<li>StreamAPI</li>
+							<li>Optional</li>
+							<li>日付時刻API</li>
+						</ol>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>1.ラムダ式</h3>
+						<div class="lft">
+							<p>
+								いきなり目玉機能です。<br>
+								「関数型言語から持ってきた」と多くの人は言いますが、Java のラムダ式はだいぶ意味合いが異なります。<br>
+								Java のラムダ式は、匿名クラスのシンタックスシュガー（糖衣構文）として実装されます。
+							</p>
+						</div>
+					</section>
+					<section>
+						<h3>1.ラムダ式</h3>
+						<div class="lft">
+							<p>例として List のソートを行なってみます。<br>もっとも基本的なソートです。</p>
+							<pre><code class="java">
+private static class IntegerComparator implements Comparator&lt;Integer&gt; {
+    @Override
+    public int compare(Integer o1, Integer o2) {
+        return o1 - o2;
+    }
+}
+
+@Test
+public void runExecutable() {
+    List&lt;Integer&gt; datas = Arrays.asList(4, 3, 8, 5, 2, 1, 7, 6);
+    List&lt;Integer&gt; expect = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+
+    Collections.sort(datas, new IntegerComparator());
+
+    assertEquals(datas, expect);
+}
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>1.ラムダ式</h3>
+						<div class="lft">
+							<p>
+								Java5 で匿名クラスが入り、書き方が一部省略できます。<br>
+								要はインターフェースをその場で new して使う方法です。
+							</p>
+							<pre><code class="java">
+List&lt;Integer&gt; datas = Arrays.asList(4, 3, 8, 5, 2, 1, 7, 6);
+List&lt;Integer&gt; expect = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+
+Collections.sort(datas, new Comparator&lt;Integer&gt;() {
+    @Override
+    public int compare(Integer o1, Integer o2) {
+        return o1 - o2;
+    }
+});
+
+assertEquals(datas, expect);
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>1.ラムダ式</h3>
+						<div class="lft">
+							<p>
+								Java8 では匿名クラスを簡略記述する形でラムダ式が実装されました。
+							</p>
+							<pre><code class="java">
+List&lt;Integer&gt; datas = Arrays.asList(4, 3, 8, 5, 2, 1, 7, 6);
+List&lt;Integer&gt; expect = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+
+Collections.sort(datas, (o1, o2) -&gt; o1 - o2);
+
+assertEquals(datas, expect);
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>1.ラムダ式</h3>
+						<div class="lft">
+							<p>
+								ラムダ式を書く条件は下記の通りです。
+							</p>
+							<ul>
+								<li>インターフェースでなければならない</li>
+								<li>実装すべきメソッドが１つでなければならない</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h3>1.ラムダ式</h3>
+						<p class="lft">
+							<p>例としてはこんな形です。</p>
+							<pre><code class="java">
+private interface Example {
+    int execute(int v);
+}
+
+@Test
+public void test() {
+    Example example1 = (num) -&gt; num + 1;
+    Example example2 = (num) -&gt; {
+        // 複数行書く場合、{} で囲み、return で値を返します。
+        return num + 2;
+    };
+
+    assertEquals(example1.execute(1), 2);
+    assertEquals(example2.execute(1), 3);
+}
+							</code></pre>
+						</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>2.デフォルトメソッド</h2>
+						<p>Java8 からはインターフェースにメソッド『実装』を含ませることができます</p>
+					</section>
+					<section>
+						<h3>2.デフォルトメソッド</h3>
+						<div class="lft">
+							<p>見たままサンプルです。</p>
+							<pre><code class="java">
+private interface Example {
+    int add(int i);
+
+    default int addTwice(int i) {
+        // 上書きしなければ、add を二重実行
+        return add(add(i));
+    }
+}
+
+@Test
+public void test() {
+    // 片方のメソッドが default で実装しているので、実装すべきメソッドは一つだけ。
+    // つまり lambda で書ける。
+    Example e = (i) -&gt; i + 1;
+    assertEquals(e.addTwice(1), 3);
+}
+							</code></pre>
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>3.Stream API</h2>
+						<div class="lft">
+							Lambda を活かす為に入った API 群です。<br>
+							Stream （流れ）の名前の指す通り、多数のデータをパイプラインのように流しながら処理できます。
+						</div>
+					</section>
+					<section>
+						<h3>3.Stream API</h3>
+						<div class="lft">
+							<p>
+								もっとも基本的な例と言えば当然リストです。<br>
+								リストに対して連続した操作ができます。
+							</p>
+							<pre><code class="java">
+List&lt;Integer&gt; list = Arrays.asList(1, 2, 3, 4);
+
+Stream&lt;Integer&gt; origin = list.stream(); // stream 型変換
+Stream&lt;Integer&gt; twice  = origin.map(i -&gt; i * i); // 二乗
+Stream&lt;String&gt;  twiceStr = twice.map(i -&gt; Integer.toString(i)); // 文字列に
+List&lt;String&gt; result = twiceStr.collect(Collectors.toList()); // リストに再変換
+
+assertEquals(result, Arrays.asList("1", "4", "9", "16"));
+							</code></pre>
+							ちょっと真面目に書きすぎましたが…
+						</div>
+					</section>
+					<section>
+						<h3>3.Stream API</h3>
+						<div class="lft">
+							<p>当然、省略して書きます。</p>
+							<pre><code class="java">
+List&lt;Integer&gt; list =
+    Arrays.asList(1, 2, 3, 4)
+        .stream(); // stream 型変換
+        .map(i -&gt; i * i); // 二乗
+        .map(i -&gt; Integer.toString(i)); // 文字列に
+        .collect(Collectors.toList()); // リストに再変換
+
+assertEquals(result, Arrays.asList("1", "4", "9", "16"));
+							</code></pre>
+							スッキリ！
+						</div>
+					</section>
+					<section>
+						<h3>3.Stream API</h3>
+						<p>その他注意点</p>
+						<ul>
+							<li>再使用できません。<br>内部的に状態を持っていて、しかも使い捨て前提です。同じ Stream を複数回実行する事はできません。</li>
+							<li>スレッドセーフティではありません。<br>上記の理由も含みますが、マルチスレッドでの安全性は保証されません。</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>4. Optional 型</h2>
+						<p>
+							Optional 型は、<strong>「空かもしれない型」</strong> を表します。<br>
+							うまく運用すれば NullPointerException がなくなります。
+						</p>
+					</section>
+					<section>
+						<h3>4. Optional 型</h3>
+						<p>値がある時のサンプルです。</p>
+						<pre><code class="java">
+Optional&lt;Integer&gt; num   = Optional.of(1);
+Optional&lt;String&gt; numStr = num.map(v -> Integer.toString(v));
+
+if (numStr.isPresent()) {
+    String result = numStr.get();
+    assertEquals(result, "1");
+}
+numStr.ifPresent(result -&gt; {
+    assertEquals(result, "1");
+});
+						</code></pre>
+					</section>
+					<section>
+						<h3>4. Optional 型</h3>
+						<p>値がないときは、Optional.empty() を使いますが、一切の修正が要りません。</p>
+						<pre><code class="java">
+Optional&lt;Integer&gt; num   = Optional.empty(); // Optional.of(1);
+Optional&lt;String&gt; numStr = num.map(v -> Integer.toString(v));
+
+if (numStr.isPresent()) {
+    String result = numStr.get();
+    assertEquals(result, "1");
+}
+numStr.ifPresent(result -&gt; {
+    assertEquals(result, "1");
+});
+						</code></pre>
+					</section>
+					<section>
+						<h3>4. Optional 型</h3>
+						<p>null が来るかもしれないメソッドもラップできます。</p>
+						<pre><code class="java">
+// getName は null かもしれないけど Option がよしなにしてくれる
+Optional&lt;String&gt; example =
+        Optional.ofNullable(getName());
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>5. 日付時刻API</h2>
+						<h4>Date 型では物足りない方々への新規ライブラリ</h4>
+					</section>
+					<section>
+						<h3>5. 日付時刻API</h3>
+						<div class="lft">
+							<p>
+								そもそも論、Java の Date は貧弱です。<br>
+								Date 型の中身は、UTC 1970/1/1 0:0:0 からの経過ミリ秒です。
+							</p>
+							<a href="https://docs.oracle.com/javase/jp/8/docs/api/java/sql/Date.html">見よ！Java 公式 Date のこの貧弱さ！</a>
+						</div>
+					</section>
+					<section>
+						<h3>5. 日付時刻API</h3>
+						<div class="lft">
+							<p>
+								そこで、Java8 では日付時刻を扱うためのクラスが新設されました。<br>
+								DB に関しては、最新のものはそこそこ対応してた気がします。
+							</p>
+							<table>
+								<thead>
+									<tr>
+										<th>クラス</th>
+										<th>内容</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Instant</td>
+										<td>エポック秒</td>
+									</tr>
+									<tr>
+										<td>LocalDateTime</td>
+										<td>タイムゾーンなし日時</td>
+									</tr>
+									<tr>
+										<td>ZonedDateTime</td>
+										<td>タイムゾーンあり日時</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</section>
+					<section>
+						<h3>5. 日付時刻API</h3>
+						<div class="lft">
+							<p>各インスタンスにはほぼ同一のメソッドが存在してます(基底が一緒なんですね)。</p>
+							<pre><code class="java">
+Instant instant = Instant.now();
+LocalDateTime localDateTime = LocalDateTime.now();
+ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Asia/Tokyo"));
+
+// LocalDateTime はシステム時刻ですが、ゾーン情報を保持しません。
+// 2017-09-10T08:13:24.319Z
+System.out.println(instant.toString());
+// 2017-09-10T17:13:24.319
+System.out.println(localDateTime.toString());
+// 2017-09-10T17:13:24.319+09:00[Asia/Tokyo]
+System.out.println(zonedDateTime.toString());
+							</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>5. 日付時刻API</h3>
+						<div class="lft">
+							<p>日付操作の API を使ってみます。</p>
+							<pre><code class="java">
+ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"));
+
+// 日付などの設定ができる
+// メソッドはイミュータブルなので zonedDateTime に変化がない
+ZonedDateTime changed = zonedDateTime.plusDays(300);
+
+// 当然 changed (300日後)と zonedDateTime (当日)では一致しない。
+assertNotEquals(changed, zonedDateTime);</code></pre>
+						</div>
+					</section>
+					<section>
+						<h3>5. 日付時刻API</h3>
+						<div class="lft">
+							<p>文字列化。DateTimeFormatter には ISO 系フォーマットがデフォルトであるが、今回はカスタム</p>
+							<pre><code class="java">
+ZonedDateTime zonedDateTime = ZonedDateTime.of(
+        2017, 8, 26, 0, 0, 0,
+        0, ZoneId.of("Asia/Tokyo"));
+// 文字列化
+String dateTime = zonedDateTime.format(
+		DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+assertEquals(dateTime, "2017/08/26 00:00:00");
+							</code></pre>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>まだ足りない</h2>
+					</section>
+					<section>
+						<h3>Java の関数型？ｗｗｗ</h3>
+						<div class="lft">
+							<p>ラムダ式が入ったから関数型？</p>
+							<p><strong>バカ言っちゃいけないよｗｗｗ</strong> ラムダ式ではまだ足りない。</p>
+							<p>強力なコレクションライブラリがあってこそだ。</p>
+						</div>
+					</section>
+					<section>
+						<h3>そんな原理主義者のために</h3>
+						<div class="lft">
+							ラムダ式を使った処理として、Stream は入ったが、正直に言えば制限が多過ぎます。<br>
+							そこで、もともと関数型言語に浸かってた原理主義者が本気を出しました。
+							
+							<strong><a href="http://www.vavr.io/" target="_blank">vavr</a></strong>
+							その昔、<strong>java.slang</strong> を名乗ったライブラリです。
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h3>Vavr 触りだけ</h3>
+					</section>
+					<section>
+						<h3>vavr</h3>
+						<div>
+							<p>vavr は、Java に足りないコレクションをアホのように揃えています。</p>
+							<ul>
+								<li>Option</li>
+								<li>Either</li>
+								<li>Tuple</li>
+								<li>List(独自実装)</li>
+								<li>Seq(独自実装)</li>
+								<li>Map(独自実装)</li>
+							</ul>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Java9</h2>
+						<h4>Java8 にも滅びの音が聞こえ始めた</h4>
+					</section>
+					<section>
+						<h3>Java9 言語仕様</h3>
+						<div class="lft">
+							<ul>
+								<li>JShell</li>
+								<li>匿名クラスにダイアモンド演算子</li>
+								<li>定数コレクション追加</li>
+								<li>Stream クラス拡張</li>
+								<li>バージョンルール変わります</li>
+							</ul>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<h3>JShell</h3>
+					<div class="lft">
+						コマンドこれだけ。
+						<code class="bash">$ jshell</code>
+						<p>終了時には <code>/exit</code> です</p>
+					</div>
+				</section>
+				
+				<section>
+					<section>
+						<h3>匿名クラスにダイアモンド演算子</h3>
+						<div class="lft">
+							<p>
+								ダイアモンド演算子というのは
+								<pre><code class="java">List&lt;String&gt; lst = new List&lt;&gt;();</code></pre>
+								の「<code>&lt;&gt;</code>」の事です。
+							</p>
+							<p>型推論の導入により、Java7 で入った機能ですが、これが匿名クラスでも使えるようになります。</p>
+							<pre><code class="java">
+Supplier&lt;String&gt; hello = new Supplier&lt;&gt;() { // Java8 だとここでエラー
+    @Override
+    public String get() {
+        return "Welcome to my broken show!";
+    }
+};
+							</code></pre>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h3>定数コレクション追加</h3>
+						<div class="lft">
+							<p>これまで、<code>Collections</code> などを使っていたものがもう少しわかりやすくなります。</p>
+							<pre><code class="java">List&lt;String&gt; LIST_STR = Arrays.asList("A", "B");
+Set&lt;String&gt; SET_STR = Collections.unmodifiableSet(
+        new HashSet&lt;&gt;(Arrays.asList("A", "B"))
+);</code></pre>
+							<p>これが</p>
+							<pre><code class="java">List&lt;String&gt; STR_LIST = List.of("A", "B");
+Set&lt;String&gt; STR_SET = Set.of("A", "B");</code></pre>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h3>Stream クラス拡張</h3>
+						<div class="lft">
+							<p>
+								条件を決めた Stream が、<code>limit</code> 以外にも
+								<code class="java">takeWhile</code>, <code class="java">dropWhile</code> が追加。
+							</p>
+							<p>さらに−−−−</p>
+						</div>
+					</section>
+					<section>
+						<h3>Stream クラス拡張</h3>
+						<div class="lft">
+							<p>任意の条件で列挙データを作成する、<code>iterate</code> メソッドが追加。</p>
+							<pre><code class="java">
+// for 文的 Stream
+Stream.iterate(0, v -&gt; v &lt; 10, v -&gt; v + 1)
+        .forEach(num -&gt; System.out.println(num));
+							</code></pre>
+							<p>さらに−−−</p>
+						</div>
+					</section>
+					<section>
+						<h3>Stream クラス拡張</h3>
+						<div class="lft">
+							<p>日付、トークンスキャナ、正規表現マッチャーからの Stream 生成などに対応するらしい。</p>
+							<p>※ LocalDate しか試してなかったけど、そのようなメソッドは未実装。</p>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<h3>バージョンルール変わります</h3>
+					<div class="lft">
+						<p>これまでの java は <strong>JDK8 update 144</strong> のような、「メジャー番号+リリース番号」の書式でした。</p>
+						<p>Java9 からは <strong>メジャー.マイナー.セキュリティ</strong> の３数字のみになります。</p>
+						<p>
+							例えば、「<strong>9.1.3</strong> Java9, マイナーバージョンアップ 1, セキュリティアップ 3」みたいな感じ。 <br>
+							コード中で、バージョン番号読み取ってると、メガトン☆ぱんち食らいます。
+						</p>
+					</div>
+				</section>
+				
+				<section>
+					<h3>Java9 高性能化！</h3>
+					<div class="lft">
+						<ul>
+							<li>コンパイル速度アップ</li>
+							<li>Stringの「+」結合速度アップ</li>
+							<li>JavaDocがHTML5+検索可能に</li>
+							<li>@Deplicate 機能アップ</li>
+							<li>String のメモリ消費が減る</li>
+						</ul>
+					</div>
+				</section>
+				
+				<section>
+					<section>
+						<h2>コンパイル速度アップ</h2>
+					</section>
+					<section>
+						<h3>コンパイル速度アップ</h3>
+						<div class="lft">
+							具体的には型推論が早くなりました。
+							<pre><code class="java">public class C&lt;T&gt; {
+    public C() {}
+    public C(T t){}
+    public C(C&lt;T&gt; c){}
+    public static &lt;U&gt; C&lt;U&gt; m(C&lt;U&gt; c) { return c; }
+
+    public static void main(String[] args) {
+        C&lt;String&gt; c = m(new C&lt;&gt;( m(new C&lt;&gt;( m(new C&lt;&gt;( m(new C&lt;&gt;( m(new C&lt;&gt;( m(new C&lt;&gt;( m(new C&lt;&gt;())))))))))))));
+    }
+}</code></pre>
+							<p>型推論でコンパイラに負荷をかけるコード。</p>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h3>Stringの「+」結合速度アップ</h3>
+						<div class="lft">
+							<p>そこそこ知られてますが、文字列を「+」で結合すると、<code>StringBuilder</code> でラップされていました。 <br>これでも、StringBuffer からの変更時にはみなさま阿鼻叫喚だったものです。</p>
+							<p>Java9 だと、StringBuilder ではなくなります。</p>
+							<p>新しい JVM だと新しい命令セット「invokedynamic」があり、さらに新しいバージョンで新しい実装ができても再コンパイルなしで対応できます。</p>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<h3>Java Doc が使いやすく！</h3>
+					<div class="lft">
+						JavaDoc が HTML5 に対応したほか、キーワード検索ボックスがデフォルトで付属するようになりました。
+					</div>
+				</section>
+				
+				<section>
+					<h3>@Deplicate 機能アップ</h3>
+					<div class="lft">
+						<p><strong>@Deplicate</strong> は <strong>非推奨</strong> というだけで、それ以上の意味がなかったのですが、追加されました。</p>
+						<p>今後は「いつ非推奨になったか？」「将来消えるのか？」が書けるようになります。</p>
+						<p>使って欲しくないメソッドにマークしましょう！</p>
+					</div>
+				</section>
+				
+				<section>
+					<section>
+						<h3>String のメモリ消費</h3>
+						<div class="lft">
+							<p>Java の文字列内部表現は、UTF16 char 配列でした。</p>
+							<p>UTF-16 はすなわち 1 文字４バイト。これは ASCII文字でも変わりません。</p>
+						</div>
+					</section>
+					<section>
+						<h1>無駄過ぎて草ｗ</h1>
+					</section>
+					<section>
+						<h3>Compact String になります</h3>
+						<div class="lft">
+							<p>内部的に「byte 配列」or「UTF-16」をフラグでスイッチする形式に変わります。</p>
+							<p>これによって無駄なメモリを使わず、文字列処理も少し高速になりますね。</p>
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h2>Project JUGSAW</h2>
+						<h4>多分Java9最大の仕様変更</h4>
+					</section>
+					<section>
+						<h2>が…</h2>
+					</section>
+					<section>
+						<h2>Gradle はまだ未対応…</h2>
+					</section>
+					<section>
+						<h2>なので説明だけ…</h2>
+					</section>
+					<section>
+						<h2>JIGSAW が何をしたいのか？</h2>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h4>解決したい問題①</h4>
+						<h3>PUBLIC が PUBLIC すぎる</h3>
+					</section>
+					<section>
+						<div class="lft">
+							例えば、あるライブラリを作るにあたって、何らかのユーティリティが必要で作ったとする。
+							
+							<pre><code class="java">
+package com.example.too_public.internal;
+
+public class InternalUtil {
+    public static String internal(final String hoge) {
+        return "Count of string " + hoge.length();
+    }
+}
+							</code></pre>
+							
+							これは内部的に必要なのであって、こんなのを直接呼んでもらっては困る。<br>
+							というかこんなのを勝手に使われるから、ライブラリを作る方も思い切った改修ができなくなってしまう。
+						</div>
+					</section>
+					<section>
+						<h1>そこで…</h1>
+					</section>
+					<section>
+						<h3>module による制限ですよ</h3>
+						<div class="lft">
+							ソースコードルートに、「<code>module-info.java</code>」を配置して、こんな風に書きます。
+							<pre><code class="java">
+module limited {
+    exports limited.service;
+}
+							</code></pre>
+							すると、これが入っている jar を外からは、<code class="java">exports</code> したパッケージしか呼べなくなります。
+						</div>
+					</section>
+				</section>
+				
+				<section>
+					<section>
+						<h4>解決したい問題②</h4>
+						<h3>JAR 地獄</h3>
+					</section>
+					<section>
+						<h3>jar 地獄</h3>
+						<div class="lft">
+							それは、あるアプリを動かそうとしたら、「xxxx.jar」 ファイルがなくて起動できない問題。<br>
+						</div>
+					</section>
+					<section>
+						<h3>例えば</h3>
+						<div class="lft">
+							あるライブラリ「alpha.jar」があり、それを元に作ったライブラリ「bravo.jar」があるとします。<br>
+							「bravo.jar」を使うアプリケーションは、極論「alpha.jar」がなくてもコンパイルできます。
+						</div>
+					</section>
+					<section>
+						<h2>すると…</h2>
+					</section>
+					<section>
+						<h2>コンパイルできても動かない（；；</h2>
+						<div>
+							これを避けたくて、maven とか gradle ができ始めたんですね。
+						</div>
+					</section>
+					<section>
+						<h3>だから、依存を記述する</h3>
+						<div class="lft">
+							「modules-info.java」には、要求するモジュールを指定できる。
+							<pre><code class="java">
+module example {
+    requires limited;
+}
+							</code></pre>
+							これをコンパイルするなら「limited」なるモジュールを寄越せと。
+						</div>
+					</section>
+					<section>
+						<h3>当たり前ですが…</h3>
+						<div class="lft">
+							一旦 module を書き始めると、module 宣言のない jar を読み込めなくなります（汗）。<br>
+							
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<h1>THE END</h1>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
